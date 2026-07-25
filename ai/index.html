@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Chat – MRB1378</title>
+
+<style>
+/* ------------- Basic Reset & Variables ------------- */
+:root {
+    --primary-bg:#f5f7fa;
+    --header-bg:#333;
+    --header-text:#fff;
+    --input-bg:#fafafa;
+    --send-btn-bg:#3880ff;
+    --send-btn-text:#fff;
+    --user-bubble:#dcf8c6;
+    --bot-bubble:#ffffff;
+    --text-dark:#222;
+    --text-light:#555;
+}
+
+*,
+*::before,
+*::after{box-sizing:border-box;margin:0;padding:0;}
+
+body{
+    font-family:"Segoe UI","Helvetica Neue",Arial,sans-serif;
+    background: var(--primary-bg);
+    height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+/* ------------- Chat Wrapper ------------- */
+.chat-wrapper{
+    width:90%;
+    max-width:480px;          /* Mobile‑first. Desktop can grow to 700px */
+    background:#fff;
+    border-radius:12px;
+    box-shadow:0 4px 12px rgba(0,0,0,.15);
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+}
+
+/* ------------- Header ------------- */
+.chat-header{
+    padding:1rem 1.2rem;
+    background:var(--header-bg);
+    color:var(--header-text);
+    font-weight:600;
+    text-align:center;
+    font-size:1.1rem;
+}
+
+/* ------------- Messages List ------------- */
+.chat-messages{
+    flex:1;
+    overflow-y:auto;
+    padding:1rem;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+.message{
+    max-width:80%;
+    padding:10px 14px;
+    border-radius:18px;
+    line-height:1.4;
+    word-wrap:break-word;
+    position:relative;
+    font-size:.93rem;
+    color:#111;
+}
+
+/* ------------- Message Types ------------- */
+.message.user{
+    align-self:flex-end;
+    background:var(--user-bubble);
+}
+.message.bot{
+    align-self:flex-start;
+    background:var(--bot-bubble);
+    box-shadow:0 1px 3px rgba(0,0,0,.08);
+}
+
+/* ------------- Input Area ------------- */
+.chat-input{
+    border-top:1px solid #ddd;
+    display:flex;
+}
+.chat-input input{
+    flex:1;
+    padding:12px 16px;
+    font-size:.95rem;
+    background:var(--input-bg);
+    border:none;
+    outline:none;
+}
+.chat-input button{
+    background:var(--send-btn-bg);
+    color:var(--send-btn-text);
+    border:none;
+    cursor:pointer;
+    font-weight:600;
+    padding:12px 20px;
+}
+
+/* ------------- Responsive Tweaks ------------- */
+@media (max-width: 360px){
+    .chat-header{font-size:.95rem;}
+    .message{font-size:.85rem;padding:8px 12px;}
+}
+</style>
+</head>
+
+<body>
+<div class="chat-wrapper">
+    <div class="chat-header">AI Chat – MRB1378</div>
+
+    <!-- Message container -->
+    <div id="messages" class="chat-messages"></div>
+
+    <!-- Input form -->
+    <form id="sendForm" class="chat-input" autocomplete="off">
+        <input type="text" id="inputText" placeholder="Type your message..." required />
+        <button type="submit">Send</button>
+    </form>
+</div>
+
+<script>
+// ----- Helper to render a message -----
+function addMessage(text, sender='bot'){
+    const div=document.createElement('div');
+    div.className=`message ${sender}`;
+    div.textContent=text;
+    document.getElementById('messages').appendChild(div);
+    // Keep the latest message in view
+    document.getElementById('messages').scrollTop=
+        document.getElementById('messages').scrollHeight;
+}
+
+// ----- Send request to your local LM Studio endpoint -----
+async function sendChat(message){
+    addMessage(message,'user');
+    try{
+        const res=await fetch('/api/v1/chat/completions',{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({
+                model:"gpt-4o-mini",
+                messages:[{role:"user",content:message}]
+            })
+        });
+        if(!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data=await res.json();
+        const reply=data.choices[0].message.content.trim();
+        addMessage(reply,'bot');
+    }catch(err){
+        console.error(err);
+        addMessage('⚠️ Something went wrong – check the console.', 'bot');
+    }
+}
+
+// ----- Handle form submit -----
+document.getElementById('sendForm').addEventListener('submit',e=>{
+    e.preventDefault();
+    const txt=document.getElementById('inputText').value.trim();
+    if(!txt) return;
+    document.getElementById('inputText').value='';
+    sendChat(txt);
+});
+</script>
+</body>
+</html>
