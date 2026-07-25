@@ -1,3 +1,3 @@
 # CHATBOT
 
-Open the chatbot here: [AI Chat Shortcut](./ai.index.html)
+Open the chatbot here: [CHATBOT](./ai.index.html)
