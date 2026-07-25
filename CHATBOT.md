@@ -51,5 +51,3 @@ The chat UI uses `ai/style.css` / inline styles for:
 - Scrollable message area (`#messages`)
 - Bubble styles (`.user`, `.bot`)
 - Input row layout (`#chat-form`, `#user-input`, button)# CHATBOT
-
-Open the chatbot here: [CHATBOT](./ai/index.html)
