@@ -1,4 +1,4 @@
-# AI Chat Shortcut (Frontend-01/ai)
+# Chatbot Shortcut (Frontend-01/ai)
 
 A simple AI chat UI that sends your message to a local/API endpoint and renders the assistant reply as chat bubbles.
 
