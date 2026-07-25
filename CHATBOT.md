@@ -1,3 +1,7 @@
+# CHATBOT
+
+Open the chatbot here: [AI Chat Shortcut](./ai/index.html)
+
 # Chatbot Shortcut (Frontend-01/ai)
 
 A simple AI chat UI that sends your message to a local/API endpoint and renders the assistant reply as chat bubbles.
